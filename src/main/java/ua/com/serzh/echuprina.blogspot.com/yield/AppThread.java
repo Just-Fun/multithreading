@@ -1,4 +1,4 @@
-package ua.com.serzh.com.yield;
+package ua.com.serzh.echuprina.blogspot.com.yield;
 
 /**
  * Created by Serzh on 8/10/16.

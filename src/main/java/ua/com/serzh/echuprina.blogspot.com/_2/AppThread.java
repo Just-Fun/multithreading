@@ -1,4 +1,4 @@
-package ua.com.serzh.com._2;
+package ua.com.serzh.echuprina.blogspot.com._2;
 
 /**
  * Created by Serzh on 8/10/16.

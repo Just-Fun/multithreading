@@ -1,4 +1,4 @@
-package ua.com.serzh.com.daemon;
+package ua.com.serzh.echuprina.blogspot.com.daemon;
 
 import java.util.concurrent.TimeUnit;
 

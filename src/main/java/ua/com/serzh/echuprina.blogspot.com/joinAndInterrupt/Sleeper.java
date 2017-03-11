@@ -1,4 +1,4 @@
-package ua.com.serzh.com.joinAndInterrupt;
+package ua.com.serzh.echuprina.blogspot.com.joinAndInterrupt;
 
 /**
  * Created by Serzh on 8/10/16.
