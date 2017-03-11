@@ -339,6 +339,7 @@ public class PlayWithCF {
 
     private static final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(
+//                    TODO understand what does it means
                     1,
                     new ThreadFactoryBuilder()
                             .setDaemon(true)
