@@ -19,15 +19,43 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  */
 public class PlayWithCF {
     private Logger log = Logger.getLogger(PlayWithCF.class);
-    private static final int TIMEOUT = 90_000;
 
     //    final CompletableFuture<Response> oneSecondTimeout = failAfter(Duration.ofSeconds(1));
-    private ScheduledThreadPoolExecutor delayer = new ScheduledThreadPoolExecutor(TIMEOUT);
 
-    private CompletableFuture<Cello> timeoutAfter(long timeout, TimeUnit unit) {
-        CompletableFuture<Cello> result = new CompletableFuture<>();
-        delayer.schedule(() -> result.completeExceptionally(new TimeoutException()), timeout, unit);
+    // 1-st variant
+    private ScheduledThreadPoolExecutor delayer = new ScheduledThreadPoolExecutor(2);
+
+//    private CompletableFuture<Cello> timeoutAfter(long timeout, TimeUnit unit) {
+    private <T> CompletableFuture<T> timeoutAfter(long timeout, TimeUnit unit) {
+//        CompletableFuture<Cello> result = new CompletableFuture<>();
+        CompletableFuture<T> result = new CompletableFuture<>();
+        delayer.schedule(() -> result.completeExceptionally(new TimeoutException("Timeout after " + timeout)), timeout, unit);
         return result;
+    }
+
+    // 2-nd variant
+    private /*static final*/ final ScheduledExecutorService scheduler =
+            Executors.newScheduledThreadPool(
+//                    TODO understand what does it means
+                    1,
+                    new ThreadFactoryBuilder()
+                            .setDaemon(true)
+                            .setNameFormat("failAfter-%d")
+                            .build());
+
+    public /*static*/ <T> CompletableFuture<T> failAfter(Duration duration) {
+        final CompletableFuture<T> promise = new CompletableFuture<>();
+        scheduler.schedule(() -> {
+            final TimeoutException ex = new TimeoutException("Timeout after " + duration);
+            return promise.completeExceptionally(ex);
+        }, duration.toMillis(), MILLISECONDS);
+        return promise;
+    }
+
+
+    public /*static*/ <T> CompletableFuture<T> within(CompletableFuture<T> future, Duration duration) {
+        final CompletableFuture<T> timeout = failAfter(duration);
+        return future.applyToEither(timeout, Function.identity());
     }
 
    /* public static ExecutorService es = Executors.newFixedThreadPool(Math.min(shops.size(), 100), r -> {
@@ -192,11 +220,15 @@ public class PlayWithCF {
                 .collect(Collectors.toList());*/
 
 
-        CompletableFuture<Cello> timeout = failAfter(Duration.ofMillis(4000));
+//        CompletableFuture<Cello> timeout = failAfter(Duration.ofMillis(4000));
+
+//        CompletableFuture<Cello> timeoutAfter = timeoutAfter(10, TimeUnit.SECONDS);
 
         List<CompletableFuture<Cello>> futures = celloSet.stream()
                 .map(cello -> CompletableFuture.supplyAsync(() -> addAge(cello), executor)
-                                .applyToEither(timeout, Function.identity())
+//                                .applyToEither(timeout, Function.identity())
+//                                .applyToEither(timeoutAfter, Function.identity())
+                                .applyToEither(timeoutAfter(10, TimeUnit.SECONDS), Function.identity())
                                 .exceptionally(error -> {
                                     log.warn("Failed addAge to " + cello.getName() + " : " + error);
 //                                    return new CompletableFuture<Cello>();
@@ -206,6 +238,19 @@ public class PlayWithCF {
                 )
                 .collect(Collectors.toList());
 
+        List<CompletableFuture<Cello>> futures2 = celloSet.stream()
+                .map(cello -> CompletableFuture.supplyAsync(() -> addAge(cello), executor)
+//                                .applyToEither(timeout, Function.identity())
+//                                .applyToEither(timeoutAfter, Function.identity())
+                                .applyToEither(timeoutAfter(10, TimeUnit.SECONDS), Function.identity())
+                                .exceptionally(error -> {
+                                    log.warn("Failed addAge to " + cello.getName() + " : " + error);
+//                                    return new CompletableFuture<Cello>();
+                                    return null;
+                                })
+
+                )
+                .collect(Collectors.toList());
 
         System.out.println("1: " + futures.size());
 
@@ -326,29 +371,6 @@ public class PlayWithCF {
             // Preserve interrupt status
             Thread.currentThread().interrupt();
         }
-    }
-
-    public static <T> CompletableFuture<T> failAfter(Duration duration) {
-        final CompletableFuture<T> promise = new CompletableFuture<>();
-        scheduler.schedule(() -> {
-            final TimeoutException ex = new TimeoutException("Timeout after " + duration);
-            return promise.completeExceptionally(ex);
-        }, duration.toMillis(), MILLISECONDS);
-        return promise;
-    }
-
-    private static final ScheduledExecutorService scheduler =
-            Executors.newScheduledThreadPool(
-//                    TODO understand what does it means
-                    1,
-                    new ThreadFactoryBuilder()
-                            .setDaemon(true)
-                            .setNameFormat("failAfter-%d")
-                            .build());
-
-    public static <T> CompletableFuture<T> within(CompletableFuture<T> future, Duration duration) {
-        final CompletableFuture<T> timeout = failAfter(duration);
-        return future.applyToEither(timeout, Function.identity());
     }
 
     private Cello addAge(Cello cello) {

@@ -54,7 +54,7 @@ public class PlayWithCF2 {
 
     public static void method2(final List<Future<?>> list, final long timeout, final TimeUnit timeUnit) {
         long globalWaitTime = timeUnit.toNanos(timeout);
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
         for (final Future<?> future : list) {
             final long waitStart = System.nanoTime();
