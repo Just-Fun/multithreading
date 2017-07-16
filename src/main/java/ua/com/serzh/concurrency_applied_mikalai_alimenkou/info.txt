@@ -1,0 +1,56 @@
+https://www.youtube.com/watch?v=am23MMhTOxM
+
+https://www.slideshare.net/alimenkou/concurrency-in-practice
+
+Java concurrency in practice
+1. Concurrency in practice Mikalai Alimenkou http://xpinjection.com @xpinjection
+2. Disclaimer This is all my personal experience
+3. You could follow my slides http://slidesha.re/1vCS9dx
+4. Lets start from practical tasks!
+5. #1. Graceful shutdown SERVICE 1 SERVICE 2 DB async jobs long batch operations
+6. Shared boolean flag
+7. #2. Retry on error task
+8. Configurable retry until done
+9. #3. Concurrent task executor TASK EXECUTOR SERVICE add task wait for tasks completion
+10. Submit tasks in single thread
+11. Limit concurrent tasks
+12. Wait for single or all tasks
+13. Get results and reduce count
+14. #4. Resource locking RESOURCE A THREAD 1 THREAD 2 WAIT THREAD 3 RESOURCE B
+15. Simple map to store locks
+16. Count lock usages to remove it
+17. Reduce synchronization penalty
+18. #5. Inter-process named locks RESOURCE THREAD 1 THREAD 2 THREAD 3 WAIT WAIT PROCESS 1 PROCESS 2
+19. Locks are stored in simple map
+20. On error throw own exception
+21. #6. Limit resource access rate RESOURCE THREAD 1 THREAD 2 WAIT THREAD 1 THREAD 2 3 REQ/SEC
+22. Use Semaphore as limiter
+23. Work with current semaphore
+24. Reset not used semaphores
+25. #7. Transparent batching TASK EXECUTOR THREAD 1 add task wait for results THREAD 2 THREAD 3 wait for results add task add task wait for results
+26. Just add task to task executor
+27. Tasks processed in batches
+28. Wait for first item opening batch
+29. Take full batch for processing
+30. #8. Resource access control RESOURCE A THREAD 1 THREAD 2 ALLOW FORBID ALLOW THREAD 3 RESOURCE B
+31. Check if resource access allowed
+32. Access success is based on time
+33. Check for successful access
+34. #9. Sharded quick counters
+35. LongAdder algorithm
+36. Lets review useful tools!
+37. #1. Thread factory builder
+38. #2. ConcurrentUtils
+39. #3. TimedSemaphore
+40. #4. TimeLimiter
+41. #5. RateLimiter
+42. #6. Striped
+43. #7. ListenableFuture
+44. #8. Uninterruptibles
+45. #9. CLHQueueLock
+46. Spin lock implementation
+47. #10. Disruptor
+48. #11. ZooKeeper + Curator • Elections • Locks • Barriers • Counters • Caches • Nodes • Queues
+49. Useful links • https://code.google.com/p/guava-libraries/ • http://commons.apache.org/proper/commons-lang/ • http://dou.ua/lenta/articles/clh-lock/ • http://habrahabr.ru/company/luxoft/blog/157273/ • http://habrahabr.ru/post/130113/ • http://lmax-exchange.github.io/disruptor/ • http://zookeeper.apache.org/ • http://curator.apache.org/ • http://en.wikipedia.org/wiki/Ctrie • https://code.google.com/p/guava-libraries/wiki/ListenableFutureExplained • https://guava-libraries.googlecode.com/files/guava-concurrent-slides.pdf
+50. And remember…
+51. @xpinjection http://xpinjection.com mikalai.alimenkou@xpinjection.com
