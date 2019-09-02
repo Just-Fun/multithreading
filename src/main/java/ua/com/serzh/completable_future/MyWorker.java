@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import java.util.concurrent.TimeUnit;
 
 public class MyWorker implements Runnable {
-    private  Logger log = Logger.getLogger(PlayWithCF2.class);
+    private  Logger log = Logger.getLogger(MyWorker.class);
 
     private final int sleepTime;
 

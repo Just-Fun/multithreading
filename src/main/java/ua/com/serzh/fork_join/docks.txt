@@ -1,0 +1,5 @@
+https://shipilev.net/talks/jeeconf-May2012-forkjoin.pdf
+
+//    https://habr.com/ru/company/otus/blog/338770/
+
+https://github.com/shipilev
