@@ -9,7 +9,6 @@ import java.util.concurrent.*;
  * Realization of executor service
  * @see ExecutorUtil
  */
-@Slf4j
 public class ExecutorUtilImpl implements ExecutorUtil {
 
     private ScheduledThreadPoolExecutor delayer = new ScheduledThreadPoolExecutor(1);
